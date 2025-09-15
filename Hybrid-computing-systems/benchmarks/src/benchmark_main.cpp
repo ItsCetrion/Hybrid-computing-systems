@@ -1,5 +1,5 @@
 #include <benchmark/benchmark.h>  // Правильный include
-#include "Core.h"                 // Правильный include
+#include "Core.cuh"                 // Правильный include
 
 // Простой бенчмарк для примера
 static void BM_Empty(benchmark::State& state) {  // Правильно: benchmark::State&

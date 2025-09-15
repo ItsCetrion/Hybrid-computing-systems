@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
-project(work1_core LANGUAGES CUDA)
+project(work1_core LANGUAGES CXX CUDA)
 
 include(../cmake/configs/cuda_arch.cmake)
+
+find_package(CUDAToolkit REQUIRED)
 
 file(GLOB_RECURSE SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cu
@@ -27,3 +29,5 @@ target_compile_options(work1_core PRIVATE -Wall -O3 -Wno-deprecated-gpu-targets)
 target_include_directories(work1_core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+set_target_properties(work1_core PROPERTIES CUDA_ARCHITECTURES "75")

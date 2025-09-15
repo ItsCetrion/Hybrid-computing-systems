@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(work1_tests LANGUAGES CXX)
+project(work1_tests LANGUAGES CXX CUDA)
 
 include(FetchContent)
 
@@ -13,7 +13,7 @@ FetchContent_MakeAvailable(googletest)
 find_package(CUDAToolkit REQUIRED)
 
 file(GLOB_RECURSE SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cu
 )
 
 add_executable(work1_tests ${SRC})

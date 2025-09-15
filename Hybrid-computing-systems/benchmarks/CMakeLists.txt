@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(work1_benchmarks LANGUAGES CXX)
+project(work1_benchmarks LANGUAGES CXX CUDA)
 
 # ВАЖНО: Сначала подключаем benchmark
 include(FetchContent)
