@@ -7,6 +7,7 @@ find_package(CUDAToolkit REQUIRED)
 
 file(GLOB_RECURSE SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cu
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 )
 
 add_library(work1_core SHARED ${SRC})

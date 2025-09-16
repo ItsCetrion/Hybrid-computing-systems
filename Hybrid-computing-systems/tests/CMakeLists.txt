@@ -13,7 +13,7 @@ FetchContent_MakeAvailable(googletest)
 find_package(CUDAToolkit REQUIRED)
 
 file(GLOB_RECURSE SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cu
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
 )
 
 add_executable(work1_tests ${SRC})

@@ -1,0 +1,1 @@
+void addVectorsCPU(const float *h_a, const float *h_b, float *h_result, const int n);
