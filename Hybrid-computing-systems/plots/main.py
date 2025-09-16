@@ -10,7 +10,7 @@ objs_CPU = list()
 
 
 def read_file() -> list:
-    file_path = os.path.join(os.path.dirname(__file__), 'data', 'results.json')
+    file_path = os.path.join(os.path.dirname(__file__), 'benchmarks_data', 'results.json')
     
     with open(file_path, "r") as file:
         data = json.load(file)
