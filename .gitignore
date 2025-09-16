@@ -47,6 +47,7 @@ bld/
 # VSCode files
 .cache/
 cmake-variants.yaml
+.vscode
 
 # Ignore autoconf / automake files
 Makefile.in
