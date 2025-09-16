@@ -19,7 +19,7 @@ TEST(CoreTest_GPU, AddVec){
   addVectorsOptimal(host_a, host_b, host_res_GPU, N);
 
   for (int i = 0; i < N; i++) {
-    EXPECT_FLOAT_EQ(host_res_CPU[i], host_res_GPU[i]);
+    ASSERT_NEAR(host_res_CPU[i], host_res_GPU[i], 1e-6f);
   }
 
   free(host_a);
@@ -30,8 +30,8 @@ TEST(CoreTest_GPU, AddVec){
 
 void fill_a_b(float *host_a, float *host_b, const int vec_size){
   for (int i = 0; i < vec_size; i++) {
-    host_a[i] = (float)i;
-    host_b[i] = (float)i;
+    host_a[i] = 0.1f * i;
+    host_b[i] = 0.2f * i;
   }
 }
 
