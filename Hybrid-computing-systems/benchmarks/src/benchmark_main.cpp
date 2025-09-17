@@ -38,9 +38,9 @@ static void BM_VectorsAddGPUCore(benchmark::State& state) {
         h_b[i] = i;
     }
 
-    float *d_a = (float*)cuda_malloc(array_size);
-    float *d_b = (float*)cuda_malloc(array_size);
-    float *d_result = (float*)cuda_malloc(array_size);
+    float *d_a = static_cast<float*>(cuda_malloc(array_size));
+    float *d_b = static_cast<float*>(cuda_malloc(array_size));
+    float *d_result = static_cast<float*>(cuda_malloc(array_size));
 
     cuda_memcpy_host_to_device(d_a, h_a, array_size);
     cuda_memcpy_host_to_device(d_b, h_b, array_size);
