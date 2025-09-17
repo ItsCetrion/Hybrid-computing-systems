@@ -27,7 +27,7 @@ def plot():
                              y=[obj['real_time'] for obj in objs_GPUCore], name="GPUCore"))
     fig.update_layout(legend_orientation="h",
                   legend=dict(x=.5, xanchor="center"),
-                  title="Зависимость времяни выполнения от количества элементов в массиве",
+                  title="Зависимость времени выполнения от количества элементов в массиве",
                   xaxis_title="Количество элементов в массиве",
                   yaxis_title="Время выполнения(ns)",
                   margin=dict(l=0, r=0, t=30, b=0))
