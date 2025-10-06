@@ -12,20 +12,20 @@ class MatrixAccessor {
         std::size_t numCols;
 
     public:
-        __host__ __device__ MatrixAccessor(T *dataPtr, std::size_t rowsVal, std::size_t colsVal)
+        __host__ __device__ MatrixAccessor(T *dataPtr, std::size_t nrows, std::size_t ncols)
             : data(dataPtr),
-              numRows(rowsVal),
-              numCols(colsVal) {}
+              numRows(nrows),
+              numCols(ncols) {}
 
-        __host__ __device__ std::size_t rows() const {
+        __host__ __device__ std::size_t nrows() const {
             return this->numRows;
         }
 
-        __host__ __device__ std::size_t cols() const {
+        __host__ __device__ std::size_t ncols() const {
             return this->numCols;
         }
 
-        __host__ __device__ std::size_t numElements() const {
+        __host__ __device__ std::size_t size() const {
             return this->numRows * this->numCols;
         }
 
@@ -36,6 +36,15 @@ class MatrixAccessor {
         __host__ __device__ const T& operator()(std::size_t i, std::size_t j) const {
             return this->data[i * this->numCols + j];
         }
+
+        __host__ __device__ T& operator[](std::size_t n) {
+            return this->data[n];
+        }
+
+        __host__ __device__ const T& operator[](std::size_t n) const {
+            return this->data[n];
+        }
+
 };
 
 #endif // MATRIX_ACCESSOR_HPP

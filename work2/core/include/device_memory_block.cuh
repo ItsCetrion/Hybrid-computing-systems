@@ -64,7 +64,11 @@ class DeviceMemoryBlock {
             return *this;
         }
 
-        T* getData() const {
+        T* getData() {
+            return this->data;
+        }
+
+        const T* getData() const {
             return this->data;
         }
 

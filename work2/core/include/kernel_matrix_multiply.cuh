@@ -12,9 +12,9 @@ __global__ void kernel_matmul_naive(const MatrixAccessor<T> A, const MatrixAcces
     std::size_t i = blockIdx.y * blockDim.y + threadIdx.y;
     std::size_t j = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if (i < A.rows() && j < B.cols()) {
+    if (i < A.nrows() && j < B.ncols()) {
         T sum = 0;
-        for (std::size_t k = 0; k < A.cols(); ++k) {
+        for (std::size_t k = 0; k < A.ncols(); ++k) {
             sum += A(i, k) * B(k, j);
         }
         C(i, j) = sum;
