@@ -15,9 +15,16 @@ class Matrix {
         std::shared_ptr<DeviceMemoryBlock<T>> deviceMemoryBlock;
         MatrixAccessor<T> accessor;
 
+        static auto createDeviceMemoryBlock(std::size_t nrows, std::size_t ncols) {
+            if (nrows <= 0 || ncols <= 0) {
+                throw std::invalid_argument("The dimensions of the matrix must be a non-negative integer");
+            }
+            return std::make_shared<DeviceMemoryBlock<T>>(nrows * ncols);
+        }
+
     public:
         Matrix(std::size_t nrows, std::size_t ncols)
-            : deviceMemoryBlock(std::make_shared<DeviceMemoryBlock<T>>(nrows * ncols)), 
+            : deviceMemoryBlock(this->createDeviceMemoryBlock(nrows, ncols)), 
               accessor(this->deviceMemoryBlock->getData(), nrows, ncols) {}
 
         std::size_t nrows() const {
@@ -60,6 +67,8 @@ class Matrix {
             auto [blocks, threads] = cuda_utils::calcGridSize(BLOCK_SIZE, result.nrows(), result.ncols());
 
             kernel_matmul_naive<T><<<blocks, threads>>>(this->accessor, rhs.accessor, result.accessor);
+
+            cuda_utils::checkCudaKernelErrors();
 
             return result;
         }

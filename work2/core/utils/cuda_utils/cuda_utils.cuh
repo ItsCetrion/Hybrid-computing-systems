@@ -15,6 +15,18 @@ namespace cuda_utils {
         return {blocks, threads};
     };
 
+    void checkCudaKernelErrors() {
+        cudaError_t err = cudaGetLastError();
+        if (err != cudaSuccess) {
+            throw std::runtime_error(std::string("CUDA kernel launch failed: ") + cudaGetErrorString(err));
+        }
+
+        err = cudaDeviceSynchronize();
+        if (err != cudaSuccess) {
+            throw std::runtime_error(std::string("CUDA kernel execution failed: ") + cudaGetErrorString(err));
+        }
+    }
+
 }
 
 #endif // CUDA_UTILS_HPP

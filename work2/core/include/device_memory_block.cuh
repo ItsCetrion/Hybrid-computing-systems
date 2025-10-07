@@ -18,10 +18,19 @@ class DeviceMemoryBlock {
             }
         }
 
+        inline void checkCudaErrorNoExcept(const cudaError_t &error) const {
+            if (error != cudaSuccess) {
+                std::cerr << std::string("CUDA error: ") + cudaGetErrorString(error) << std::endl;
+            }
+        }
+
     public:
         DeviceMemoryBlock(std::size_t sizeVal)
             : size(sizeVal),
             data(nullptr) {
+            if (sizeVal <= 0) {
+                throw std::invalid_argument("The size of DeviceMemoryBlock must be a non-negative integer");
+            }
             checkCudaError(cudaMalloc(&this->data, this->size * sizeof(T)));
         }
 
@@ -40,7 +49,7 @@ class DeviceMemoryBlock {
         }
 
         DeviceMemoryBlock& operator=(const DeviceMemoryBlock &other) {
-            if (this != other) {
+            if (this != &other) {
                 if (this->data) {
                     checkCudaError(cudaFree(this->data));
                 }
@@ -54,11 +63,11 @@ class DeviceMemoryBlock {
         DeviceMemoryBlock& operator=(DeviceMemoryBlock&& other) noexcept {
             if (this != &other) {
                 if (this->data) {
-                    checkCudaError(cudaFree(this->data));
+                    checkCudaErrorNoExcept(cudaFree(this->data));
                 }
                 this->size = other.size;
                 this->data = other.data;
-                other->data = nullptr;
+                other.data = nullptr;
                 other.size = 0;
             }
             return *this;
@@ -86,7 +95,7 @@ class DeviceMemoryBlock {
 
         ~DeviceMemoryBlock() {
             if (this->data) {
-                checkCudaError(cudaFree(this->data));
+                checkCudaErrorNoExcept(cudaFree(this->data));
             }
         }
 };
