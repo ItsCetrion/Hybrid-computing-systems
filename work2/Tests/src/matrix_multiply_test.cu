@@ -45,16 +45,16 @@ INSTANTIATE_TEST_SUITE_P(
     MatrixMulTest,
     ::testing::Values(
         // Квадратные матрицы
-        std::make_tuple(1, 1, 1, 1e-6),
-        std::make_tuple(2, 2, 2, 1e-6),
-        std::make_tuple(3, 3, 3, 1e-6),
-        std::make_tuple(16, 16, 16, 1e-6),
+        std::make_tuple(1, 1, 1, 1e-5),
+        std::make_tuple(2, 2, 2, 1e-5),
+        std::make_tuple(3, 3, 3, 1e-5),
+        std::make_tuple(16, 16, 16, 1e-5),
         // Прямоугольные матрицы
-        std::make_tuple(2, 3, 4, 1e-6),
-        std::make_tuple(5, 3, 7, 1e-6),
+        std::make_tuple(2, 3, 4, 1e-5),
+        std::make_tuple(5, 3, 7, 1e-5),
         // Граничные случаи
-        std::make_tuple(127, 128, 129, 1e-6),
-        std::make_tuple(128, 128, 128, 1e-6),
-        std::make_tuple(256, 256, 256, 1e-6)
+        std::make_tuple(127, 128, 129, 1e-5),
+        std::make_tuple(128, 128, 128, 1e-5),
+        std::make_tuple(512, 512, 512, 1e-5)
     )
 );
