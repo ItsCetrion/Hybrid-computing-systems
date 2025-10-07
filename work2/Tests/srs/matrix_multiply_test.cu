@@ -2,7 +2,7 @@
 #include <Eigen/Dense>
 #include <cuda_runtime.h>
 
-#include <../core/include/matrix.cuh>
+#include <matrix.cuh>
 
 #define EIGEN_NO_CUDA
 

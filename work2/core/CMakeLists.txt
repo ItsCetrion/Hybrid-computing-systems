@@ -5,24 +5,20 @@ include(../cmake/configs/cuda_arch.cmake)
 
 find_package(CUDAToolkit REQUIRED)
 
+add_library(work2_core INTERFACE)
 add_library(work2::core ALIAS work2_core)
 
-set_target_properties(work1_core PROPERTIES
-    CUDA_RUNTIME_LIBRARY Shared
-    CUDA_SEPARABLE_COMPILATION ON
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/core
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/core
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/core
-)
-
-set_target_minimum_cuda_arch(work2_core 75)
-
-target_compile_features(work2_core PRIVATE cuda_std_20)
-
-target_compile_options(work2_core PRIVATE -Wall -O3 -Wno-deprecated-gpu-targets)
-
-target_include_directories(work2_core PUBLIC
+target_include_directories(work2_core INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-set_target_properties(work1_core PROPERTIES CUDA_ARCHITECTURES "75")
+target_compile_features(work2_core INTERFACE cuda_std_20)
+
+# Для INTERFACE библиотеки используем INTERFACE компиляционные опции
+target_compile_options(work2_core INTERFACE 
+    $<$<COMPILE_LANGUAGE:CUDA>:-Wno-deprecated-gpu-targets>
+    $<$<COMPILE_LANGUAGE:CXX>:-Wall -O3>
+)
+
+# Установка архитектуры CUDA (адаптируйте функцию для INTERFACE)
+set_target_minimum_cuda_arch(work2_core 75)
