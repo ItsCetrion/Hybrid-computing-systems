@@ -1,57 +1,58 @@
 #include <gtest/gtest.h>
 #include <matrix.cuh>
+#include <memory>
 
 class MatrixTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    matrix = Matrix<float>(rows, cols);
+    matrix = std::make_unique<Matrix<float>>(rows, cols);
   }
 
   const std::size_t rows = 3;
   const std::size_t cols = 4;
   const std::size_t size = rows * cols;
-  Matrix<float> matrix;
+  std::unique_ptr<Matrix<float>> matrix;
 };
 
 TEST_F(MatrixTest, ConstructorAndCols)
 {
-    EXPECT_EQ(matrix.ncols(), cols);
+    EXPECT_EQ(matrix->ncols(), cols);
 }
 
 TEST_F(MatrixTest, ConstructorAndRows)
 {
-    EXPECT_EQ(matrix.nrows(), rows);
+    EXPECT_EQ(matrix->nrows(), rows);
 }
 
 TEST_F(MatrixTest, ConstructorAndSize)
 {
-    EXPECT_EQ(matrix.size(), size);
+    EXPECT_EQ(matrix->size(), size);
 }
 
 TEST_F(MatrixTest, BlockAccess)
 {
-    auto block = matrix.getDeviceMemoryBlock();
+    auto block = matrix->getDeviceMemoryBlock();
     EXPECT_EQ(block.getSize(), size);
 
     const auto& const_matrix = matrix;
-    auto const_block = const_matrix.getDeviceMemoryBlock();
+    auto const_block = const_matrix->getDeviceMemoryBlock();
     EXPECT_EQ(const_block.getSize(), size);
 }
 
 TEST_F(MatrixTest, AccessorAccess)
 {
-    auto accessor = matrix.getAccessor();
+    auto accessor = matrix->getAccessor();
     EXPECT_EQ(accessor.size(), size);
 
     const auto& const_matrix = matrix;
-    auto const_accessor = const_matrix.getAccessor();
+    auto const_accessor = const_matrix->getAccessor();
     EXPECT_EQ(const_accessor.size(), size);
 }
 
 TEST_F(MatrixTest, AccessorDataConsistency)
 {
-    auto block = matrix.getDeviceMemoryBlock();
-    auto accessor = matrix.getAccessor();
+    auto block = matrix->getDeviceMemoryBlock();
+    auto accessor = matrix->getAccessor();
     EXPECT_EQ(block.getSize(), accessor.size());
 }
 

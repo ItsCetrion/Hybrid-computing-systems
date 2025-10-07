@@ -6,20 +6,27 @@ include(../cmake/deps/eigen.cmake)
 
 find_package(CUDAToolkit REQUIRED)
 
-file(GLOB_RECURSE SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cu
+set(TEST_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/matrix_test.cu
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/matrix_multiply_test.cu
 )
 
-add_executable(work2_tests ${SRC})
+add_executable(work2_tests ${TEST_SOURCES})
+
+set_target_properties(work2_tests PROPERTIES
+    CUDA_RUNTIME_LIBRARY Shared
+    CUDA_SEPARABLE_COMPILATION ON
+    CUDA_ARCHITECTURES "75"
+)
 
 target_compile_features(work2_tests PRIVATE 
-    cxx_std_20
     cuda_std_20
 )
 
 target_compile_options(work2_tests PRIVATE 
-    $<$<COMPILE_LANGUAGE:CXX>:-Wall -O3>
-    $<$<COMPILE_LANGUAGE:CUDA>:-O3 -Wno-deprecated-gpu-targets>
+    -O3 
+    -Wno-deprecated-gpu-targets
+    --expt-relaxed-constexpr  # Разрешает constexpr в device code
 )
 
 target_include_directories(work2_tests PRIVATE
@@ -40,5 +47,4 @@ add_test(NAME work2_tests COMMAND work2_tests)
 
 set_target_properties(work2_tests PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/tests
-    CUDA_RUNTIME_LIBRARY Shared
 )

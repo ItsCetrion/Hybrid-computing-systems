@@ -14,11 +14,13 @@ target_include_directories(work2_core INTERFACE
 
 target_compile_features(work2_core INTERFACE cuda_std_20)
 
-# Для INTERFACE библиотеки используем INTERFACE компиляционные опции
 target_compile_options(work2_core INTERFACE 
     $<$<COMPILE_LANGUAGE:CUDA>:-Wno-deprecated-gpu-targets>
     $<$<COMPILE_LANGUAGE:CXX>:-Wall -O3>
 )
 
-# Установка архитектуры CUDA (адаптируйте функцию для INTERFACE)
 set_target_minimum_cuda_arch(work2_core 75)
+
+set_target_properties(work2_core PROPERTIES 
+    CUDA_ARCHITECTURES "75"  # Для T4
+)

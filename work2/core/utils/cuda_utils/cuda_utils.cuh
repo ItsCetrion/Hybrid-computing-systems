@@ -7,7 +7,7 @@
 
 namespace cuda_utils {
 
-    std::pair<dim3, dim3> calcGridSize(std::size_t blockSize, std::size_t workSizeRows, std::size_t workSizeCols) {
+    inline std::pair<dim3, dim3> calcGridSize(std::size_t blockSize, std::size_t workSizeRows, std::size_t workSizeCols) {
         dim3 blocks((workSizeCols + blockSize - 1) / blockSize,
                     (workSizeRows + blockSize - 1) / blockSize);
         dim3 threads(blockSize, blockSize);
@@ -15,7 +15,7 @@ namespace cuda_utils {
         return {blocks, threads};
     };
 
-    void checkCudaKernelErrors() {
+    inline void checkCudaKernelErrors() {
         cudaError_t err = cudaGetLastError();
         if (err != cudaSuccess) {
             throw std::runtime_error(std::string("CUDA kernel launch failed: ") + cudaGetErrorString(err));

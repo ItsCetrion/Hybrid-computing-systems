@@ -9,10 +9,12 @@
 class MatrixMulTest : public ::testing::TestWithParam<std::tuple<std::size_t, std::size_t, std::size_t, float>> {
     protected:
     bool matmul_test_impl(std::size_t rows_a, std::size_t cols_a, std::size_t cols_b, float tol) {
-        Eigen::MatrixXf a_target = Eigen::MatrixXf::Random(rows_a, cols_a);
-        Eigen::MatrixXf b_target = Eigen::MatrixXf::Random(cols_a, cols_b);
+        using RowMatrixXf = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
+        RowMatrixXf a_target = RowMatrixXf::Random(rows_a, cols_a);
+        RowMatrixXf b_target = RowMatrixXf::Random(cols_a, cols_b);
         
-        Eigen::MatrixXf c_target = a_target * b_target;
+        RowMatrixXf c_target = a_target * b_target;
         
         Matrix<float> a(rows_a, cols_a);
         a.getDeviceMemoryBlock().copyFromHost(a_target.data());
@@ -21,10 +23,12 @@ class MatrixMulTest : public ::testing::TestWithParam<std::tuple<std::size_t, st
         b.getDeviceMemoryBlock().copyFromHost(b_target.data());
         
         Matrix<float> c = a * b;
+
+        cudaDeviceSynchronize(); 
         
         if (c.nrows() != rows_a || c.ncols() != cols_b) return false;
         
-        Eigen::MatrixXf c_from_device = Eigen::MatrixXf::Zero(rows_a, cols_b);
+        RowMatrixXf c_from_device = RowMatrixXf::Zero(rows_a, cols_b);
         c.getDeviceMemoryBlock().copyToHost(c_from_device.data());
         
         return c_target.isApprox(c_from_device, tol);
