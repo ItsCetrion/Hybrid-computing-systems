@@ -22,7 +22,7 @@ class MatrixMulTest : public ::testing::TestWithParam<std::tuple<std::size_t, st
         
         Matrix<float> c = a * b;
         
-        if (c.rows() != rows_a || c.cols() != cols_b) return false;
+        if (c.nrows() != rows_a || c.ncols() != cols_b) return false;
         
         Eigen::MatrixXf c_from_device = Eigen::MatrixXf::Zero(rows_a, cols_b);
         c.getDeviceMemoryBlock().copyToHost(c_from_device.data());
