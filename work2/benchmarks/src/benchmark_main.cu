@@ -1,19 +1,19 @@
-#include <cudagh.hpp>
 #include <kernel_matrix_multiply.cuh>
 #include <matrix.cuh>
 #define EIGEN_NO_CUDA
 #include <Eigen/Dense>
 #include <benchmark/benchmark.h>
-#include <cuda_timer.hpp> 
+#include <cuda_timer.hpp>
+#include <cudagh.hpp>
 
 
 static void BM_EigenMatrixAddCPU(benchmark::State& state)
 {
-  auto n = state.range(0);
+  auto size = state.range(0);
 
-  Eigen::MatrixXf a = Eigen::MatrixXf(n, n);
-  Eigen::MatrixXf b = Eigen::MatrixXf(n, n);
-  Eigen::MatrixXf c = result(n,n);
+  Eigen::MatrixXf a = Eigen::MatrixXf(size, size);
+  Eigen::MatrixXf b = Eigen::MatrixXf(size, size);
+  Eigen::MatrixXf c = result(size, size);
 
   for (auto _ : state) {
     result = a * b;
@@ -21,6 +21,34 @@ static void BM_EigenMatrixAddCPU(benchmark::State& state)
     benchmark::ClobberMemory();
   }
 }
+
+static void BM_CUDAMatrixAddGPU(benchmark::State& state)
+{
+  auto size = state.range(0);
+
+  auto a = Matrix<float>(size, size);
+  auto b = Matrix<float>(size, size);
+  auto c = Matrix<float>(size, size);
+
+  for (auto _ : state)
+  {
+    float elapsed_time = 0;
+
+    CUDATimer timer(elapsed_time);
+    kernel_matmul_naive<<<cudagh::cover(size, 128), 128>>>(
+      a.getAccessor(), b.getAccessor(), c.getAccessor());
+
+
+    benchmark::DoNotOptimize(elapsed_time);
+    benchmark::ClobberMemory();
+
+    state.SetIterationTime(elapsed_time);
+  }
+}
+
+
+
+
 
 void* operator new(std::size_t bytes);  // Dumb clangd!
 
