@@ -15,7 +15,8 @@ static void BM_EigenMatrixAddCPU(benchmark::State& state)
   Eigen::MatrixXf b = Eigen::MatrixXf(size, size);
   Eigen::MatrixXf c = result(size, size);
 
-  for (auto _ : state) {
+  for (auto _ : state)
+  {
     result = a * b;
     benchmark::DoNotOptimize(result.data());
     benchmark::ClobberMemory();
@@ -57,18 +58,18 @@ constexpr auto range = std::make_pair(8, 1 << 26);
 constexpr auto unit = benchmark::kMillisecond;
 
 BENCHMARK(BM_EigenMatrixAddCPU)
-    ->Name("Eigen Vector Addition (CPU)")
+    ->Name("Eigen Matrix Addition (CPU)")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)
     ->UseRealTime()
     ->MeasureProcessCPUTime();
 
-// BENCHMARK(BM_CUDAVectorAddGPU)
-//     ->Name("CUDA Vector Addition (GPU)")
-//     ->RangeMultiplier(multiplier)
-//     ->Ranges({range})
-//     ->Unit(unit)
-//     ->UseManualTime();
+BENCHMARK(BM_CUDAMatrixAddGPU)
+    ->Name("CUDA Matrix Addition (GPU)")
+    ->RangeMultiplier(multiplier)
+    ->Ranges({range})
+    ->Unit(unit)
+    ->UseManualTime();
 
 BENCHMARK_MAIN();  // NOLINT
