@@ -39,6 +39,9 @@ static void BM_CUDAMatrixAddGPU(benchmark::State& state)
       kernel_matmul_naive<<<cudagh::cover(size, 128), 128>>>(
         a.getAccessor(), b.getAccessor(), c.getAccessor());
     }
+    cudaError_t err = cudaGetLastError();
+    if (err != cudaSuccess)
+      std::cerr << "CUDA launch error: " << cudaGetErrorString(err) << std::endl;
     benchmark::DoNotOptimize(elapsed_time);
     benchmark::ClobberMemory();
 
@@ -48,12 +51,12 @@ static void BM_CUDAMatrixAddGPU(benchmark::State& state)
 
 void* operator new(std::size_t bytes);  // Dumb clangd!
 
-constexpr int multiplier = 8;
-constexpr auto range = std::make_pair(8, 1 << 26);
+constexpr int multiplier = 2;
+constexpr auto range = std::make_pair(16, 1024);
 constexpr auto unit = benchmark::kMillisecond;
 
 BENCHMARK(BM_EigenMatrixAddCPU)
-    ->Name("Eigen Matrix Addition (CPU)")
+    ->Name("Eigen Matrix Multiplication (CPU)")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)
@@ -61,7 +64,7 @@ BENCHMARK(BM_EigenMatrixAddCPU)
     ->MeasureProcessCPUTime();
 
 BENCHMARK(BM_CUDAMatrixAddGPU)
-    ->Name("CUDA Matrix Addition (GPU)")
+    ->Name("CUDA Matrix Multiplication (GPU)")
     ->RangeMultiplier(multiplier)
     ->Ranges({range})
     ->Unit(unit)
