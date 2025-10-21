@@ -13,7 +13,7 @@ static void BM_EigenMatrixAddCPU(benchmark::State& state)
 
   Eigen::MatrixXf a = Eigen::MatrixXf(size, size);
   Eigen::MatrixXf b = Eigen::MatrixXf(size, size);
-  Eigen::MatrixXf c = result(size, size);
+  Eigen::MatrixXf result(size, size);
 
   for (auto _ : state)
   {
@@ -27,29 +27,24 @@ static void BM_CUDAMatrixAddGPU(benchmark::State& state)
 {
   auto size = state.range(0);
 
-  auto a = Matrix<float>(size, size);
-  auto b = Matrix<float>(size, size);
-  auto c = Matrix<float>(size, size);
+  Matrix<float> a(size, size);
+  Matrix<float> b(size, size);
+  Matrix<float> c(size, size);
 
   for (auto _ : state)
   {
     float elapsed_time = 0;
-
-    CUDATimer timer(elapsed_time);
-    kernel_matmul_naive<<<cudagh::cover(size, 128), 128>>>(
-      a.getAccessor(), b.getAccessor(), c.getAccessor());
-
-
+    {
+      CUDATimer timer(elapsed_time);
+      kernel_matmul_naive<<<cudagh::cover(size, 128), 128>>>(
+        a.getAccessor(), b.getAccessor(), c.getAccessor());
+    }
     benchmark::DoNotOptimize(elapsed_time);
     benchmark::ClobberMemory();
 
     state.SetIterationTime(elapsed_time);
   }
 }
-
-
-
-
 
 void* operator new(std::size_t bytes);  // Dumb clangd!
 

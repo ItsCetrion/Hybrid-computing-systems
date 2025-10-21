@@ -2,6 +2,7 @@
 #define DEVICE_MEMORY_BLOCK_HPP
 
 #include <cuda_runtime.h>
+#include <iostream>
 
 #include <string>
 

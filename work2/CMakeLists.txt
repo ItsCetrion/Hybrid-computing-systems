@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(work2 LANGUAGES CXX CUDA)
 
 option(ENABLE_TESTS "Enable tests" ON)
-option(ENABLE_BENCH "Enable benchmarks" OFF)
+option(ENABLE_BENCH "Enable benchmarks" ON)
 
 add_subdirectory(core)
 
