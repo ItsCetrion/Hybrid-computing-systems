@@ -4,10 +4,11 @@
 
 #include <matrix.cuh>
 #include "matrix_operations.cuh"
+#include "cuda_strategies/naive_matmul_strategy.cuh"
 
 #define EIGEN_NO_CUDA
 
-class MatrixMulTest : public ::testing::TestWithParam<std::tuple<std::size_t, std::size_t, std::size_t, float>> {
+class NativeMatrixMulTest : public ::testing::TestWithParam<std::tuple<std::size_t, std::size_t, std::size_t, float>> {
     protected:
     bool matmul_test_impl(std::size_t rows_a, std::size_t cols_a, std::size_t cols_b, float tol) {
         using RowMatrixXf = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -23,28 +24,27 @@ class MatrixMulTest : public ::testing::TestWithParam<std::tuple<std::size_t, st
         Matrix<float> b(cols_a, cols_b);
         b.getDeviceMemoryBlock().copyFromHost(b_target.data());
         
-        // Matrix<float> c = a * b;
-        Matrix<float> result = multiply<float, NaiveMatMulStrategy>(a, b);
+        Matrix<float> result = matrix_ops::multiply<float, NaiveMatMulStrategy>(a, b);
 
         cudaDeviceSynchronize(); 
         
-        if (c.nrows() != rows_a || c.ncols() != cols_b) return false;
+        if (result.nrows() != rows_a || result.ncols() != cols_b) return false;
         
         RowMatrixXf c_from_device = RowMatrixXf::Zero(rows_a, cols_b);
-        c.getDeviceMemoryBlock().copyToHost(c_from_device.data());
+        result.getDeviceMemoryBlock().copyToHost(c_from_device.data());
         
         return c_target.isApprox(c_from_device, tol);
     }
 };
 
-TEST_P(MatrixMulTest, matmul_test) {
+TEST_P(NativeMatrixMulTest, matmul_test) {
   auto [rows_a, cols_a, cols_b, tol] = GetParam();
   EXPECT_TRUE(matmul_test_impl(rows_a, cols_a, cols_b, tol));
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    MatrixMulTestSuite,
-    MatrixMulTest,
+    NativeMatrixMulTestSuite,
+    NativeMatrixMulTest,
     ::testing::Values(
         // Квадратные матрицы
         std::make_tuple(1, 1, 1, 1e-5),

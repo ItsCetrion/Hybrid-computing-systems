@@ -7,6 +7,7 @@ include(../cmake/deps/eigen.cmake)
 find_package(CUDAToolkit REQUIRED)
 
 set(TEST_SOURCES
+${CMAKE_CURRENT_SOURCE_DIR}/src/matrix_test.cu
     ${CMAKE_CURRENT_SOURCE_DIR}/src/native_matrix_multiply_test.cu
     ${CMAKE_CURRENT_SOURCE_DIR}/src/shmem_matrix_multiply_test.cu
 )
