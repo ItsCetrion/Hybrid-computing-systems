@@ -6,9 +6,14 @@
 
 namespace cudagh {
 
-inline std::uint32_t cover(std::uint32_t work_size, std::size_t block_size) {
-  return (work_size + block_size - 1) / block_size;
-}
+inline std::pair<dim3, dim3> cover(std::size_t blockSize, std::size_t workSizeRows, std::size_t workSizeCols) {
+        dim3 blocks((workSizeCols + blockSize - 1) / blockSize,
+                    (workSizeRows + blockSize - 1) / blockSize);
+        dim3 threads(blockSize, blockSize);
+
+        return {blocks, threads};
+    };
+
 
 }  // namespace cudagh
 
