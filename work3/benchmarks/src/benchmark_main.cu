@@ -2,7 +2,7 @@
 
 #include <cuda_timer.hpp>
 #include <cudagh.hpp>
-#include <kernels\kernel_matrix_multiply.cuh>
+#include "kernels/kernel_matrix_multiply.cuh"
 #include <matrix.cuh>
 #include "cuda_strategies/naive_matmul_strategy.cuh"
 #include "cuda_strategies/shmem_matmul_strategy.cuh"
@@ -44,7 +44,7 @@ static void BM_CUDAShmemMatrixAddGPU(benchmark::State& state)
     float elapsed_time = 0;
     {
       CUDATimer timer(elapsed_time);
-      kernel_matmul_shmem<<<cudagh::cover(size, 128), 128>>>(
+      kernel_matmul_shmem<float, 64><<<cudagh::cover(size, 64), 64>>>(
         a.getAccessor(), b.getAccessor(), c.getAccessor());
     }
     

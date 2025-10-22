@@ -3,6 +3,7 @@
 #include <cuda_runtime.h>
 
 #include <string>
+#include <iostream>
 
 
 template <typename T>
