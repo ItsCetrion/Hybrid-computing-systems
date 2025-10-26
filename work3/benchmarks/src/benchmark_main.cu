@@ -15,12 +15,14 @@ static void BM_CUDANativeMatrixAddGPU(benchmark::State& state)
   Matrix<float> b(size, size);
   Matrix<float> c(size, size);
 
+  constexpr std::size_t blockSize = 16;
+
   for (auto _ : state)
   {
     float elapsed_time = 0;
     {
       CUDATimer timer(elapsed_time);
-      auto [blocks, threads] = cudagh::cover(16, size, size)
+      auto [blocks, threads] = cudagh::cover(blockSize, size, size);
       kernel_matmul_naive<<<blocks, threads>>>(
         a.getAccessor(), b.getAccessor(), c.getAccessor());
     }
@@ -40,13 +42,15 @@ static void BM_CUDAShmemMatrixAddGPU(benchmark::State& state)
   Matrix<float> b(size, size);
   Matrix<float> c(size, size);
 
+  constexpr std::size_t blockSize = 16;
+
   for (auto _ : state)
   {
     float elapsed_time = 0;
     {
       CUDATimer timer(elapsed_time);
-      auto [blocks, threads] = cudagh::cover(16, size, size)
-      kernel_matmul_shmem<float, blocks><<<blocks, threads>>>(
+      auto [blocks, threads] = cudagh::cover(blockSize, size, size);
+      kernel_matmul_shmem<float, blockSize><<<blocks, threads>>>(
         a.getAccessor(), b.getAccessor(), c.getAccessor());
     }
     
