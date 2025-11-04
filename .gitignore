@@ -122,6 +122,7 @@ dlldata.c
 .external/
 .gtest/
 
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
