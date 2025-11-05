@@ -1,7 +1,6 @@
 #include <benchmark/benchmark.h>
 
 #include <cuda_timer.hpp>
-#include <cudagh.hpp>
 // #include "kernels/kernel_matrix_multiply.cuh"
 #include "kernels/kernel_matmul_shmem.cuh"
 #include "kernels/kernel_matmul_wmma.cuh"
@@ -42,8 +41,8 @@ static void BM_CUDAWmmaMatrixAddGPU(benchmark::State& state)
 {
   auto size = state.range(0);
 
-  Matrix<float> a(size, size);
-  Matrix<float> b(size, size);
+  Matrix<half> a(size, size);
+  Matrix<half> b(size, size);
   Matrix<float> c(size, size);
 
   for (auto _ : state)

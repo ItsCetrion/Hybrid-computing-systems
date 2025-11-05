@@ -24,7 +24,7 @@ class ShmemMatrixMulTest : public ::testing::TestWithParam<std::tuple<std::size_
         Matrix<float> b(cols_a, cols_b);
         b.getDeviceMemoryBlock().copyFromHost(b_target.data());
         
-        Matrix<float> result = matrix_ops::multiply<float, ShmemMatMulStrategy>(a, b);
+        Matrix<float> result = multiply<MatMulStrategy::Shmem, float, float, float>(a, b);
 
         cudaDeviceSynchronize(); 
         
