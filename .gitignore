@@ -45,6 +45,7 @@ bld/
 [Ll]ogs/
 
 # VSCode files
+.vscode
 .cache/
 cmake-variants.yaml
 
