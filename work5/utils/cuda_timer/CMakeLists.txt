@@ -8,7 +8,7 @@ file(GLOB_RECURSE SRC
 )
 
 add_library(cuda_timer STATIC ${SRC})
-add_library(work4::cuda_timer ALIAS cuda_timer)
+add_library(work5::cuda_timer ALIAS cuda_timer)
 
 target_include_directories(cuda_timer PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include/

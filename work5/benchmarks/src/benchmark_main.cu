@@ -1,6 +1,8 @@
 #include <benchmark/benchmark.h>
 
 #include <cuda_timer.hpp>
+#include "vector.cuh"
+#include "device_memory_block.cuh"
 #include "kernels/kernel_vecred_br.cuh"
 #include "kernels/kernel_vecred_nobr.cuh"
 
@@ -19,7 +21,7 @@ static void BM_CUDAShmemReductionSumGPU(benchmark::State& state)
     float elapsed_time = 0; 
     {
         std::size_t gridSize = cuda_utils::calcGridSize(vector.size(), blockSize, unrollFactor);
-        std::size_t shmemSize = blockSize * sizeof(T);
+        std::size_t shmemSize = blockSize * sizeof(float);
         kernel_vecred_nobr<float, unrollFactor><<<gridSize, blockSize, shmemSize>>>(vector.accessor(), result.data());
     }
 
@@ -44,7 +46,7 @@ static void BM_CUDAWarmShuffleReductionSumGPU(benchmark::State& state)
     float elapsed_time = 0; 
     {
         std::size_t gridSize = cuda_utils::calcGridSize(vector.size(), blockSize, unrollFactor);
-        std::size_t shmemSize = blockSize * sizeof(T);
+        std::size_t shmemSize = blockSize * sizeof(float);
         kernel_vecred_br<float, unrollFactor><<<gridSize, blockSize, shmemSize>>>(vector.accessor(), result.data());
     }
 
@@ -58,20 +60,22 @@ static void BM_CUDAWarmShuffleReductionSumGPU(benchmark::State& state)
 void* operator new(std::size_t bytes);  // Dumb clangd!
 
 constexpr int multiplier = 2;
-constexpr auto range = std::make_pair(8, 1<<31);
+constexpr std::uint64_t min_n = 8;
+constexpr std::uint64_t max_n = 8ull << 28;
+// constexpr auto range = std::make_pair((int64_t)8, (int64_t(1) << 31));
 constexpr auto unit = benchmark::kMillisecond;
 
-BENCHMARK(BM_CUDAShmemMatrixAddGPU)
+BENCHMARK(BM_CUDAShmemReductionSumGPU)
     ->Name("CUDA Shmem Reduction Sum (GPU)")
     ->RangeMultiplier(multiplier)
-    ->Ranges({range})
+    ->Range(min_n, max_n)
     ->Unit(unit)
     ->UseManualTime();
 
-BENCHMARK(BM_CUDAWmmaMatrixAddGPU)
+BENCHMARK(BM_CUDAWarmShuffleReductionSumGPU)
     ->Name("CUDA Warp Shuffle Reduction Sum (GPU)")
     ->RangeMultiplier(multiplier)
-    ->Ranges({range})
+    ->Range(min_n, max_n)
     ->Unit(unit)
     ->UseManualTime();
 
