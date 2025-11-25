@@ -8,7 +8,7 @@
 template <class T, std::size_t unrollFactor>
 __global__ void kernel_vecred_nobr(const VectorAccessor<T> vector, T *result) {
 
-    extern __shared__ T shmem[];
+    extern __shared__ T partialSum[];
 
     std::size_t tid = threadIdx.x;
     std::size_t i = blockIdx.x * (unrollFactor * blockDim.x) + tid;
@@ -22,19 +22,19 @@ __global__ void kernel_vecred_nobr(const VectorAccessor<T> vector, T *result) {
             sum += vector[index];
         }
     }
-    shmem[tid] = sum;
+    partialSum[tid] = sum;
 
     __syncthreads();
 
-    for (std::size_t s = blockDim.x / 2; s > 0; s >>= 1) {
+    for (std::size_t s = blockDim.x / 2; s > 0; s /= 2) {
         if (tid < s) {
-            shmem[tid] += shmem[tid + s];
+            partialSum[tid] += partialSum[tid + s];
         }
         __syncthreads();
     }
 
     if (tid == 0) {
-        atomicAdd(result, shmem[0]);
+        atomicAdd(result, partialSum[0]);
     }
 
 }

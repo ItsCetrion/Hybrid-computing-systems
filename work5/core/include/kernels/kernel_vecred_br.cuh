@@ -17,7 +17,7 @@ __device__ __forceinline__ T warpReduceSum(T sum) {
 template <class T, std::size_t unrollFactor>
 __global__ void kernel_vecred_br(const VectorAccessor<T> vector, T *result) {
 
-    extern __shared__ T shmem[];
+    extern __shared__ T partialSum[];
 
     std::size_t tid = threadIdx.x;
     std::size_t i = blockIdx.x * (unrollFactor * blockDim.x) + tid;
@@ -37,13 +37,13 @@ __global__ void kernel_vecred_br(const VectorAccessor<T> vector, T *result) {
     sum = warpReduceSum(sum);
 
     if (laneId == 0) {
-        shmem[warpId] = sum;
+        partialSum[warpId] = sum;
     }
 
     __syncthreads();
 
     if (warpId == 0) {
-        sum = (tid < (blockDim.x + warpSize - 1) / warpSize) ? shmem[laneId] : 0;
+        sum = (tid < (blockDim.x + warpSize - 1) / warpSize) ? partialSum[laneId] : 0;
         sum = warpReduceSum(sum);
 
         if (laneId == 0) {

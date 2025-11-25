@@ -11,7 +11,7 @@
 
 class ShmemReductionSumTest : public ::testing::TestWithParam<std::tuple<std::size_t, float>> {
     protected:
-    bool matsum_test_impl(std::size_t size, float tol) {
+    void matsum_test_impl(std::size_t size, float tol) {
         
         Eigen::VectorXf en_vector = Eigen::VectorXf::Random(size);
         float en_vector_result = en_vector.sum();

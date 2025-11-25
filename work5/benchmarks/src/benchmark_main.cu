@@ -20,6 +20,7 @@ static void BM_CUDAShmemReductionSumGPU(benchmark::State& state)
   {
     float elapsed_time = 0; 
     {
+        CUDATimer timer(elapsed_time);
         std::size_t gridSize = cuda_utils::calcGridSize(vector.size(), blockSize, unrollFactor);
         std::size_t shmemSize = blockSize * sizeof(float);
         kernel_vecred_nobr<float, unrollFactor><<<gridSize, blockSize, shmemSize>>>(vector.accessor(), result.data());
@@ -45,6 +46,7 @@ static void BM_CUDAWarmShuffleReductionSumGPU(benchmark::State& state)
   {
     float elapsed_time = 0; 
     {
+        CUDATimer timer(elapsed_time);
         std::size_t gridSize = cuda_utils::calcGridSize(vector.size(), blockSize, unrollFactor);
         std::size_t shmemSize = blockSize * sizeof(float);
         kernel_vecred_br<float, unrollFactor><<<gridSize, blockSize, shmemSize>>>(vector.accessor(), result.data());
@@ -61,7 +63,7 @@ void* operator new(std::size_t bytes);  // Dumb clangd!
 
 constexpr int multiplier = 2;
 constexpr std::uint64_t min_n = 8;
-constexpr std::uint64_t max_n = 8ull << 28;
+constexpr std::uint64_t max_n = 8ull << 20;
 // constexpr auto range = std::make_pair((int64_t)8, (int64_t(1) << 31));
 constexpr auto unit = benchmark::kMillisecond;
 
